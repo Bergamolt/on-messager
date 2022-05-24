@@ -1,0 +1,13 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 50px;
+  background-color: #1976d2;
+  padding: 0 10px;
+}
+
+.logo {
+  font-size: 22px;
+  color: #fff;
+}
