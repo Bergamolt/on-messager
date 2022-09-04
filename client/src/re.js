@@ -1,106 +1,149 @@
 import './App.css'
-import {useContext, useEffect, useState} from 'react'
-import socket from './socket'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
-import {Messages} from './containers/Messages'
-import {SendMessageForm} from './containers/SendMessageForm'
-import {Header} from './components/header'
-import {Chats} from './containers/chats'
-import { AuthContext } from './context/auth'
+import socket from './services/socket'
+import { PRIVATE_MESSAGE, USERS } from './services/socket/constants'
+
+import { Messages } from './containers/messages'
+import { SendMessageForm } from './containers/send-message-form'
+import { Header } from './components/header'
+import { Chats } from './containers/chats'
+import { useSelector } from 'react-redux'
+import { getUserIdSelector, getUsernameSelector } from './store/auth/selectors'
+import { getSelectedChatSelector } from './store/chats/selectors'
 
 export const Re = () => {
   const [messages, setMessages] = useState([])
-  const [username, setUsername] = useState(null)
   const [users, setUsers] = useState([])
-  const [selectedUser, setSelectedUser] = useState(null)
+  const selectedUser = useSelector(getSelectedChatSelector)
 
-  const {userId} = useContext(AuthContext)
-
-  // {
-  //   messages: [
-  //     {
-  //       content: '',
-  //       fromSelf: true or false
-  //     }
-  //   ],
-  //   userId: '',
-  //   username: ''
-  // }
+  const username = useSelector(getUsernameSelector)
+  const userId = useSelector(getUserIdSelector)
 
   const sendMessage = (content) => {
+    console.log('sendMessage___')
     if (selectedUser) {
       socket.emit('private message', {
         content,
-        to: selectedUser.userId,
+        to: selectedUser.username,
       })
 
-      selectedUser.messages.push({
-        content,
-        fromSelf: true,
-      })
+      setMessages([
+        ...messages,
+        {
+          content,
+          to: selectedUser.username,
+          from: username,
+        },
+      ])
+
+      // setUsers(
+      //   users.map((user) => {
+      //     if (user.self) {
+      //       user.messages.push({
+      //         content,
+      //         fromSelf: true,
+      //         to: selectedUser.username,
+      //       })
+      //     }
+
+      //     return user
+      //   })
+      // )
+    }
+  }
+
+  const allUsersHandler = (users) =>
+    setUsers((oldState) => users.map((user) => ({ ...user, self: user.username === username })))
+
+  const offlineUser = (offlineUser) => setUsers((oldState) => oldState.filter((user) => user.username !== offlineUser))
+
+  const onlineUser = (onlineUser) => setUsers((oldState) => [...oldState, onlineUser])
+
+  const addMessage = ({ content, from, to }) => {
+    console.log(selectedUser?.username)
+    if (selectedUser.username === from) {
+      setMessages((oldState) => [...oldState, { content, from, to }])
     }
   }
 
   useEffect(() => {
-    socket.on('connect_error', (err) => {
-      if (err.message === 'invalid username') {
-        console.log(err)
-      }
-    })
+    socket.on('users', (users) => allUsersHandler(users))
 
-    // socket.on('users', (users) => {
-    //   setUsers(
-    //     users.map((user) => ({...user, self: user.username === username}))
-    //   )
+    socket.on('connect', () => console.log('connect____'))
+
+    socket.on('disconnect', () => console.log('disconnect____'))
+
+    // socket.on('user disconnected', ({ username }) => {
+    //   console.log('user disconnected_____ ', username)
+    //   offlineUser(username)
     // })
 
-    socket.on('user connected', (user) => {
-      setUsers((oldUsers) =>
-        oldUsers
-          .filter((it) => it.username !== user.username)
-          .concat([user])
-          .map((user) => ({...user, self: user.username === username}))
-      )
+    // socket.on(USERS, (user) => {
+    //   console.log('user connected_____ ', user)
+    //   onlineUser(user)
+    // })
+
+    // socket.on('user logout', (1) => {
+    //   console.log('user logout____', username);
+    // })
+
+    // Messages
+    socket.on(PRIVATE_MESSAGE, ({ content, from, to }) => {
+      console.log('Private message____', { content, from, to })
+      addMessage({ content, from, to })
+      // setUsers((oldUsers) => {
+      //   return oldUsers.map((user) => {
+      //     if (user.username === to) {
+      //       return {
+      //         ...user,
+      //         messages: user?.messages ? [...user.messages, { content, from }] : [{ content, from }],
+      //       }
+      //     }
+
+      //     return user
+      //   })
+      // })
     })
 
-    socket.on('private message', ({content, from}) => {
-      setUsers((oldUsers) => {
-        return oldUsers.map((user) => {
-          if (user.userId === from) {
-            return {
-              ...user,
-              messages: [...user.messages, {content, fromSelf: true}],
-            }
-          }
-        })
-      })
-    })
-
-    return () => {
-      socket.off('connect_error')
-    }
-  }, [])
-
-  useEffect(() => {
     if (userId) {
+      socket.auth = { username }
       socket.connect()
     }
 
-    return () => socket.disconnect()
-  }, [userId])
-  console.log({users})
+    return () => {
+      socket.removeListener(PRIVATE_MESSAGE)
+      socket.removeListener(USERS)
+      socket.removeListener('connect')
+      socket.removeListener('disconnect')
+      socket.disconnect()
+    }
+  }, [userId, username])
+
+  useEffect(() => {
+    ;(async () => {
+      if (selectedUser) {
+        const { data } = await axios.get('/api/messages/get', {
+          headers: { 'Content-Type': 'application/json' },
+          params: { from: username, to: selectedUser.username },
+        })
+
+        setMessages(data)
+      }
+    })()
+  }, [selectedUser, username])
+
+  console.log('USERS___', { selectedUser })
+
   return (
     <>
       <Header />
-      <div className="content">
+      <div className='content'>
         <>
-          <Chats
-            users={users}
-            selected={selectedUser}
-            handlerSelectedUser={setSelectedUser}
-          />
-          <div className="chat">
-            <Messages messages={messages} />
+          <Chats users={users} selected={selectedUser} />
+          <div className='chat'>
+            <Messages username={username} messages={messages} />
             <SendMessageForm onSendMessage={sendMessage} />
           </div>
         </>

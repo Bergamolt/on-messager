@@ -1,9 +1,9 @@
 import mongoose from 'mongoose'
 
-const {Schema, model} = mongoose
+const { Schema, model, Types } = mongoose
 
 const schema = new Schema({
-  email: {
+  username: {
     type: String,
     required: true,
     unique: true,
@@ -12,6 +12,7 @@ const schema = new Schema({
     type: String,
     required: true,
   },
+  friends: [{ type: Types.ObjectId, ref: 'User' }],
 })
 
 export default model('User', schema)

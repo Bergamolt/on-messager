@@ -1,18 +1,22 @@
-import {useFormik} from 'formik'
+import { useFormik } from 'formik'
 import axios from 'axios'
 
 import classes from './styles.module.css'
-import { useContext } from 'react'
-import { AuthContext } from '../../context/auth'
+import { Paper, TextField, Typography } from '@mui/material'
+import { Link } from 'react-router-dom'
+import { ROUTE } from '../../routes/constants'
+import { Button } from 'lau-components'
+import { useDispatch } from 'react-redux'
+import { login } from '../../store/auth'
 
 export const Login = () => {
-  const {login} = useContext(AuthContext)
+  const dispatch = useDispatch()
 
   const handlerLogin = async (email, password) => {
     try {
-      const {data} = await axios.post(
+      const { data } = await axios.post(
         '/api/auth/login',
-        {email, password},
+        { email, password },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -21,7 +25,8 @@ export const Login = () => {
       )
 
       if (data) {
-        login(data.userId, data.token)
+        const { userId, token, username } = data
+        dispatch(login({ userId, token, username }))
       }
     } catch (err) {
       console.error(err)
@@ -33,34 +38,41 @@ export const Login = () => {
       email: '',
       password: '',
     },
-    onSubmit: ({email, password}) => {
+    onSubmit: ({ email, password }) => {
       handlerLogin(email, password)
     },
   })
 
   return (
     <div className={classes.root}>
-      <h1>Login</h1>
-      <form className={classes.form} onSubmit={formik.handleSubmit}>
-        <input
-          type="email"
-          id="email"
-          placeholder="Email address"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          required
-        />
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          autoComplete="true"
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
+      <Paper className={classes.container}>
+        <Typography className={classes.title} variant='h3'>
+          Login
+        </Typography>
+        <form className={classes.form} onSubmit={formik.handleSubmit}>
+          <TextField
+            type='email'
+            id='email'
+            placeholder='Email address'
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            required
+          />
+          <TextField
+            type='password'
+            id='password'
+            placeholder='Password'
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            autoComplete='true'
+            required
+          />
+          <Button type='submit'>Login</Button>
+          <Typography variant='p'>
+            Want to register an <Link to={ROUTE.REGISTRATION}>account</Link>?
+          </Typography>
+        </form>
+      </Paper>
     </div>
   )
 }

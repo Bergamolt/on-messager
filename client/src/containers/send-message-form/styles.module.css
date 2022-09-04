@@ -1,0 +1,16 @@
+.root {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+}
+
+.button {
+  width: 70px;
+  height: auto;
+}

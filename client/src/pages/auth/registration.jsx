@@ -1,17 +1,20 @@
-import {useFormik} from 'formik'
+import { useFormik } from 'formik'
 import axios from 'axios'
 
 import classes from './styles.module.css'
-import {useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { Paper, TextField, Typography } from '@mui/material'
+import { ROUTE } from '../../routes/constants'
+import { Button } from 'lau-components'
 
 export const Registration = () => {
   const navigate = useNavigate()
 
-  const handlerRegistration = async (email, password) => {
+  const handlerRegistration = async (username, password) => {
     try {
-      const {data, status} = await axios.post(
+      const { data, status } = await axios.post(
         '/api/auth/registration',
-        {email, password},
+        { username, password },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -33,49 +36,56 @@ export const Registration = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: '',
+      username: '',
       password: '',
       rePassword: '',
     },
-    onSubmit: ({email, password, rePassword}) => {
+    onSubmit: ({ username, password, rePassword }) => {
       if (password === rePassword) {
-        handlerRegistration(email, password)
+        handlerRegistration(username, password)
       }
     },
   })
 
   return (
     <div className={classes.root}>
-      <h1>Registration</h1>
-      <form className={classes.form} onSubmit={formik.handleSubmit}>
-        <input
-          type="email"
-          id="email"
-          placeholder="Email address"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          required
-        />
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          autoComplete="true"
-          required
-        />
-        <input
-          type="password"
-          id="rePassword"
-          placeholder="Repeat password"
-          value={formik.values.rePassword}
-          onChange={formik.handleChange}
-          autoComplete="true"
-          required
-        />
-        <button type="submit">Registration</button>
-      </form>
+      <Paper className={classes.container}>
+        <Typography className={classes.title} variant='h3'>
+          Registration
+        </Typography>
+        <form className={classes.form} onSubmit={formik.handleSubmit}>
+          <TextField
+            type='text'
+            id='username'
+            placeholder='Username'
+            value={formik.values.username}
+            onChange={formik.handleChange}
+            required
+          />
+          <TextField
+            type='password'
+            id='password'
+            placeholder='Password'
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            autoComplete='true'
+            required
+          />
+          <TextField
+            type='password'
+            id='rePassword'
+            placeholder='Repeat password'
+            value={formik.values.rePassword}
+            onChange={formik.handleChange}
+            autoComplete='true'
+            required
+          />
+          <Button type='submit'>Registration</Button>
+          <Typography variant='p'>
+            Login to an existing <Link to={ROUTE.LOGIN}>account</Link>?
+          </Typography>
+        </form>
+      </Paper>
     </div>
   )
 }

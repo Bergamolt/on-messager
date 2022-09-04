@@ -2,5 +2,6 @@ export const ROUTE = {
   HOME: '/',
   LOGIN: '/login',
   REGISTRATION: '/registration',
-  NOT_PAGE: '*'
+  USERS: '/users',
+  NOT_PAGE: '*',
 }

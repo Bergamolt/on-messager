@@ -1,11 +1,11 @@
-import {useContext} from 'react'
-import {Navigate} from 'react-router-dom'
-import {AuthContext} from '../context/auth'
-import {ROUTE} from './constants'
+import { useSelector } from 'react-redux'
+import { Navigate } from 'react-router-dom'
+import { getUserIdSelector } from '../store/auth/selectors'
+import { ROUTE } from './constants'
 
-export const PrivatePage = ({children}) => {
-  const {userId} = useContext(AuthContext)
-  console.log(userId)
+export const PrivatePage = ({ children }) => {
+  const userId = useSelector(getUserIdSelector)
+
   if (!userId) {
     return <Navigate to={ROUTE.LOGIN} />
   }
