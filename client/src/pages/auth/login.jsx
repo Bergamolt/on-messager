@@ -1,22 +1,23 @@
 import { useFormik } from 'formik'
 import axios from 'axios'
+import cx from 'classnames'
 
 import classes from './styles.module.css'
-import { Paper, TextField, Typography } from '@mui/material'
+import { TextField, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { ROUTE } from '../../routes/constants'
-import { Button } from 'lau-components'
+import { Button, Paper } from 'lau-ui'
 import { useDispatch } from 'react-redux'
 import { login } from '../../store/auth'
 
 export const Login = () => {
   const dispatch = useDispatch()
 
-  const handlerLogin = async (email, password) => {
+  const handlerLogin = async (username, password) => {
     try {
       const { data } = await axios.post(
         '/api/auth/login',
-        { email, password },
+        { username, password },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -35,26 +36,24 @@ export const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: '',
+      username: '',
       password: '',
     },
-    onSubmit: ({ email, password }) => {
-      handlerLogin(email, password)
+    onSubmit: ({ username, password }) => {
+      handlerLogin(username, password)
     },
   })
 
   return (
     <div className={classes.root}>
       <Paper className={classes.container}>
-        <Typography className={classes.title} variant='h3'>
-          Login
-        </Typography>
+        <h3 className={cx('h3', classes.title)}>Login</h3>
         <form className={classes.form} onSubmit={formik.handleSubmit}>
           <TextField
-            type='email'
-            id='email'
+            type='text'
+            id='username'
             placeholder='Email address'
-            value={formik.values.email}
+            value={formik.values.username}
             onChange={formik.handleChange}
             required
           />

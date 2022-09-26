@@ -6,6 +6,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f2f6fc;
 }
 
 code {
@@ -13,6 +14,8 @@ code {
     monospace;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }

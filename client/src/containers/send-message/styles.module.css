@@ -4,6 +4,13 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
+
+  background-color: #f2f6fc;
+  min-width: 100px;
+  min-height: 100px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
 }
 
 .input {

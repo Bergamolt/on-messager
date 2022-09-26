@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import { Drawer } from 'lau-components'
+import { Drawer } from 'lau-ui'
 import { useDispatch } from 'react-redux'
 import { setSelectedChat } from '../../store/chats'
 import classes from './styles.module.css'

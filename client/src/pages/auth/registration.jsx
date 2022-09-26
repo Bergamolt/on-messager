@@ -5,7 +5,7 @@ import classes from './styles.module.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { Paper, TextField, Typography } from '@mui/material'
 import { ROUTE } from '../../routes/constants'
-import { Button } from 'lau-components'
+import { Button } from 'lau-ui'
 
 export const Registration = () => {
   const navigate = useNavigate()

@@ -1,8 +1,8 @@
-import { AppBar } from 'lau-components'
+import { AppBar } from 'lau-ui'
 import { Typography } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { logout } from '../../store/auth'
-import { Button } from 'lau-components'
+import { Button } from 'lau-ui'
 import classes from './styles.module.css'
 
 export const Header = () => {

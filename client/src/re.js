@@ -6,8 +6,9 @@ import socket from './services/socket'
 import { PRIVATE_MESSAGE, USERS } from './services/socket/constants'
 
 import { Messages } from './containers/messages'
-import { SendMessageForm } from './containers/send-message-form'
+import { SendMessage } from './containers/send-message'
 import { Header } from './components/header'
+import { Paper } from 'lau-ui'
 import { Chats } from './containers/chats'
 import { useSelector } from 'react-redux'
 import { getUserIdSelector, getUsernameSelector } from './store/auth/selectors'
@@ -142,10 +143,11 @@ export const Re = () => {
       <div className='content'>
         <>
           <Chats users={users} selected={selectedUser} />
-          <div className='chat'>
+
+          <Paper className='chat'>
             <Messages username={username} messages={messages} />
-            <SendMessageForm onSendMessage={sendMessage} />
-          </div>
+            <SendMessage onSendMessage={sendMessage} />
+          </Paper>
         </>
       </div>
     </>

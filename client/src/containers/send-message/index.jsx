@@ -1,9 +1,9 @@
 import { TextField } from '@mui/material'
 import { useFormik } from 'formik'
-import {Button} from 'lau-components'
+import {Button} from 'lau-ui'
 import classes from './styles.module.css'
 
-export const SendMessageForm = ({ onSendMessage }) => {
+export const SendMessage = ({ onSendMessage }) => {
   const formik = useFormik({
     initialValues: {
       input: '',
