@@ -7,14 +7,14 @@ import { AuthPage } from './auth-page'
 import { Login } from '../pages/auth/login'
 import { Registration } from '../pages/auth/registration'
 import { Users } from '../pages/users'
-import { Re } from '../re'
+import { Home } from '../pages/home'
 
 const routes = [
   {
     path: ROUTE.HOME,
     element: (
       <PrivatePage>
-        <Re />
+        <Home />
       </PrivatePage>
     ),
   },

@@ -1,20 +1,20 @@
-import './App.css'
+import '../../App.css'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
-import socket from './services/socket'
-import { PRIVATE_MESSAGE, USERS } from './services/socket/constants'
+import socket from '../../services/socket'
+import { PRIVATE_MESSAGE, USERS } from '../../services/socket/constants'
 
-import { Messages } from './containers/messages'
-import { SendMessage } from './containers/send-message'
-import { Header } from './components/header'
+import { Messages } from '../../containers/messages'
+import { SendMessage } from '../../containers/send-message'
+import { Header } from '../../components/header'
 import { Paper } from 'lau-ui'
-import { Chats } from './containers/chats'
+import { Chats } from '../../containers/chats'
 import { useSelector } from 'react-redux'
-import { getUserIdSelector, getUsernameSelector } from './store/auth/selectors'
-import { getSelectedChatSelector } from './store/chats/selectors'
+import { getUserIdSelector, getUsernameSelector } from '../../store/auth/selectors'
+import { getSelectedChatSelector } from '../../store/chats/selectors'
 
-export const Re = () => {
+export const Home = () => {
   const [messages, setMessages] = useState([])
   const [users, setUsers] = useState([])
   const selectedUser = useSelector(getSelectedChatSelector)
@@ -76,36 +76,10 @@ export const Re = () => {
 
     socket.on('disconnect', () => console.log('disconnect____'))
 
-    // socket.on('user disconnected', ({ username }) => {
-    //   console.log('user disconnected_____ ', username)
-    //   offlineUser(username)
-    // })
-
-    // socket.on(USERS, (user) => {
-    //   console.log('user connected_____ ', user)
-    //   onlineUser(user)
-    // })
-
-    // socket.on('user logout', (1) => {
-    //   console.log('user logout____', username);
-    // })
-
     // Messages
     socket.on(PRIVATE_MESSAGE, ({ content, from, to }) => {
       console.log('Private message____', { content, from, to })
       addMessage({ content, from, to })
-      // setUsers((oldUsers) => {
-      //   return oldUsers.map((user) => {
-      //     if (user.username === to) {
-      //       return {
-      //         ...user,
-      //         messages: user?.messages ? [...user.messages, { content, from }] : [{ content, from }],
-      //       }
-      //     }
-
-      //     return user
-      //   })
-      // })
     })
 
     if (userId) {
