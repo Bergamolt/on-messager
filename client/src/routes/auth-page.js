@@ -1,3 +1,4 @@
+import PropsTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { Navigate, useLocation } from 'react-router-dom'
 import { getUserIdSelector } from '../store/auth/selectors'
@@ -14,4 +15,8 @@ export const AuthPage = ({ children }) => {
   }
 
   return children
+}
+
+AuthPage.propTypes = {
+  children: PropsTypes.node,
 }

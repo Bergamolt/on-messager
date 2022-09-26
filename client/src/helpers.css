@@ -6,3 +6,14 @@
   line-height: 1.167;
   letter-spacing: 0em;
 }
+
+.h6 {
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  letter-spacing: 0.0075em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

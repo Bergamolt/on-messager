@@ -1,18 +1,15 @@
-import { AppBar } from 'lau-ui'
-import { Typography } from '@mui/material'
-import { useDispatch } from 'react-redux'
-import { logout } from '../../store/auth'
-import { Button } from 'lau-ui'
 import classes from './styles.module.css'
+import { AppBar } from 'lau-ui'
+import { useDispatch } from 'react-redux'
+import { Button } from 'lau-ui'
+import { logout } from '../../store/auth'
 
 export const Header = () => {
   const dispatch = useDispatch()
 
   return (
     <AppBar className={classes.root}>
-      <Typography variant='h6' noWrap component='a'>
-        Chat Online
-      </Typography>
+      <a className='h6'>Chat Online</a>
       <Button onClick={() => dispatch(logout())}>Log Out</Button>
     </AppBar>
   )

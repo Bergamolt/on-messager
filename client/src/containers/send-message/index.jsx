@@ -1,7 +1,9 @@
+import classes from './styles.module.css'
+
+import PropTypes from 'prop-types'
 import { TextField } from '@mui/material'
 import { useFormik } from 'formik'
-import {Button} from 'lau-ui'
-import classes from './styles.module.css'
+import { Button } from 'lau-ui'
 
 export const SendMessage = ({ onSendMessage }) => {
   const formik = useFormik({
@@ -29,4 +31,8 @@ export const SendMessage = ({ onSendMessage }) => {
       </Button>
     </form>
   )
+}
+
+SendMessage.propTypes = {
+  onSendMessage: PropTypes.func,
 }
