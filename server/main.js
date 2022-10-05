@@ -10,7 +10,7 @@ import usersRouter from './routes/users.js'
 
 import dotenv from 'dotenv'
 import { addMessage } from './helpers/messages.js'
-import { PRIVATE_MESSAGE, USERS } from './services/constants.js'
+import { PRIVATE_MESSAGE, USERS, USER_CONNECTED, USER_DISCONNECTED } from './services/constants.js'
 dotenv.config()
 
 const app = express()
@@ -24,10 +24,6 @@ io.on('connection', (socket) => {
   const users = []
 
   for (let [id, socket] of io.of('/').sockets) {
-    // if (!messages[socket.username]) {
-    //   messages[socket.username] = []
-    // }
-
     users.push({
       id: id,
       username: socket.username,
@@ -37,35 +33,10 @@ io.on('connection', (socket) => {
 
   socket.emit(USERS, users)
 
-  // socket.broadcast.emit('user connected', {
-  //   id: socket.id,
-  //   username: socket.username,
-  //   messages: [],
-  // })
-
   // Create channel and listener private message
-
   socket.join(socket.username)
 
   socket.on(PRIVATE_MESSAGE, async ({ content, to }) => {
-    // messages[socket.username] = [
-    //   ...messages[socket.username],
-    //   {
-    //     content,
-    //     to,
-    //     from: socket.username,
-    //   },
-    // ]
-
-    // messages[to] = [
-    //   ...messages[to],
-    //   {
-    //     content,
-    //     to,
-    //     from: socket.username,
-    //   },
-    // ]
-
     await addMessage(content, socket.username, to)
 
     socket.to(to).emit(PRIVATE_MESSAGE, {
@@ -75,17 +46,11 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.on('connect', () =>
-    socket.broadcast.emit('user connected', {
-      id: socket.id,
-      username: socket.username,
-      messages: [],
-    })
-  )
+  socket.broadcast.emit(USER_CONNECTED, { id: socket.id, username: socket.username, messages: [] })
 
-  socket.on('disconnect', () => socket.broadcast.emit('user disconnected', { username: socket.username }))
-
-  socket.on('user logout', () => socket.broadcast.emit('user logout', { username: socket.username }))
+  socket.on('disconnect', () => {
+    socket.broadcast.emit(USER_DISCONNECTED, socket.username)
+  })
 })
 
 io.use((socket, next) => {

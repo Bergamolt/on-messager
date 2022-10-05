@@ -8,19 +8,22 @@ import classes from './styles.module.css'
 export const Chats = ({ users, selected }) => {
   const dispatch = useDispatch()
 
+  const selectedUserHandler = (user) => () => dispatch(setSelectedChat(user))
+
   return (
     <Drawer className={classes.root}>
       {users?.map((user, index) => (
         <span
-          onClick={() => dispatch(setSelectedChat(user))}
+          onClick={selectedUserHandler(user)}
           key={index}
           className={cx(
             classes.user,
-            selected?.username === user?.username && classes.selectedUser,
-            !user?.online && classes.online
+            user?.self && classes.self,
+            !user?.online && classes.online,
+            selected?.username === user?.username && classes.selectedUser
           )}
         >
-          {user.username}
+          {user.self ? 'Saved messages' : user.username}
         </span>
       ))}
     </Drawer>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import socket from '../../services/socket'
-import { PRIVATE_MESSAGE, USERS } from '../../services/socket/constants'
+import { PRIVATE_MESSAGE, USERS, USER_CONNECTED, USER_DISCONNECTED } from '../../services/socket/constants'
 
 import { Messages } from '../../containers/messages'
 import { SendMessage } from '../../containers/send-message'
@@ -25,7 +25,7 @@ export const Home = () => {
   const sendMessage = (content) => {
     console.log('sendMessage___')
     if (selectedUser) {
-      socket.emit('private message', {
+      socket.emit(PRIVATE_MESSAGE, {
         content,
         to: selectedUser.username,
       })
@@ -38,66 +38,55 @@ export const Home = () => {
           from: username,
         },
       ])
-
-      // setUsers(
-      //   users.map((user) => {
-      //     if (user.self) {
-      //       user.messages.push({
-      //         content,
-      //         fromSelf: true,
-      //         to: selectedUser.username,
-      //       })
-      //     }
-
-      //     return user
-      //   })
-      // )
     }
   }
 
   const allUsersHandler = (users) =>
-    setUsers((oldState) => users.map((user) => ({ ...user, self: user.username === username })))
+    setUsers(() => users.map((user) => ({ ...user, self: user.username === username })))
 
   const offlineUser = (offlineUser) => setUsers((oldState) => oldState.filter((user) => user.username !== offlineUser))
 
   const onlineUser = (onlineUser) => setUsers((oldState) => [...oldState, onlineUser])
 
   const addMessage = ({ content, from, to }) => {
-    console.log(selectedUser?.username)
     if (selectedUser.username === from) {
       setMessages((oldState) => [...oldState, { content, from, to }])
     }
   }
 
   useEffect(() => {
-    socket.on('users', (users) => allUsersHandler(users))
-
-    socket.on('connect', () => console.log('connect____'))
-
-    socket.on('disconnect', () => console.log('disconnect____'))
-
-    // Messages
-    socket.on(PRIVATE_MESSAGE, ({ content, from, to }) => {
-      console.log('Private message____', { content, from, to })
-      addMessage({ content, from, to })
-    })
-
     if (userId) {
       socket.auth = { username }
       socket.connect()
     }
 
+    socket.on(PRIVATE_MESSAGE, ({ content, from, to }) => {
+      addMessage({ content, from, to })
+    })
+
+    socket.on(USERS, (users) => {
+      allUsersHandler(users)
+    })
+
+    socket.on(USER_CONNECTED, (user) => {
+      onlineUser(user)
+    })
+
+    socket.on(USER_DISCONNECTED, (username) => {
+      offlineUser(username)
+    })
+
     return () => {
       socket.removeListener(PRIVATE_MESSAGE)
       socket.removeListener(USERS)
-      socket.removeListener('connect')
-      socket.removeListener('disconnect')
+      socket.removeListener(USER_CONNECTED)
+      socket.removeListener(USER_DISCONNECTED)
       socket.disconnect()
     }
   }, [userId, username])
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (selectedUser) {
         const { data } = await axios.get('/api/messages/get', {
           headers: { 'Content-Type': 'application/json' },
@@ -108,8 +97,6 @@ export const Home = () => {
       }
     })()
   }, [selectedUser, username])
-
-  console.log('USERS___', { selectedUser })
 
   return (
     <>

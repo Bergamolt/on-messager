@@ -3,12 +3,10 @@
   bottom: 0;
   display: flex;
   justify-content: space-between;
-  width: 100%;
-
+  width: calc(100% - 32px);
   background-color: #f2f6fc;
   min-width: 100px;
   min-height: 100px;
-  width: 100%;
   padding: 16px;
   border-radius: 16px;
 }
