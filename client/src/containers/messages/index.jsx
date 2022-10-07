@@ -4,13 +4,18 @@ import classes from './styles.module.css'
 
 export const Messages = ({ messages, username }) => {
   return (
-    <ul className={classes.root} id='messages'>
+    <div className={classes.root} id='messages'>
       {messages?.map((msg, i) => (
-        <li className={cx(username === msg.from && classes.self)} key={i}>
-          {msg.content}
-        </li>
+        <div className={cx(classes.bubble, username === msg.from && classes.self)} key={i}>
+          <div className={classes.bubble_content}>
+            <div className={classes.message}>
+              <span>{msg.content}</span>
+              <span className={classes.time}>11:02</span>
+            </div>
+          </div>
+        </div>
       ))}
-    </ul>
+    </div>
   )
 }
 
