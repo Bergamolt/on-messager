@@ -3,6 +3,8 @@ import cx from 'classnames'
 import classes from './styles.module.css'
 
 export const Messages = ({ messages, username }) => {
+  const date = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric' })
+
   return (
     <div className={classes.root} id='messages'>
       {messages?.map((msg, i) => (
@@ -10,7 +12,7 @@ export const Messages = ({ messages, username }) => {
           <div className={classes.bubble_content}>
             <div className={classes.message}>
               <span>{msg.content}</span>
-              <span className={classes.time}>11:02</span>
+              <span className={classes.time}>{date.format(msg.date)}</span>
             </div>
           </div>
         </div>
