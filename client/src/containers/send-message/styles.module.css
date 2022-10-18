@@ -1,21 +1,45 @@
 .root {
   position: absolute;
   bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  column-gap: 0.5rem;
+  max-width: 662px;
   width: calc(100% - 32px);
-  background-color: #f2f6fc;
-  min-width: 100px;
-  min-height: 100px;
-  padding: 16px;
-  border-radius: 16px;
+  padding: 16px 0;
+  margin: 0 auto;
+}
+
+.send {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 12px;
+  padding: 6px;
+  background-color: #eaf1fb;
 }
 
 .input {
   width: 100%;
 }
 
+.input fieldset {
+  border: none;
+}
+
 .button {
-  width: 70px;
-  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 54px;
+  min-width: 54px;
+  height: 54px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
 }

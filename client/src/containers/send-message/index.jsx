@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { TextField } from '@mui/material'
 import { useFormik } from 'formik'
 import { Button } from 'lau-ui'
+import { MdSend } from 'react-icons/md'
 
 export const SendMessage = ({ onSendMessage }) => {
   const formik = useFormik({
@@ -19,15 +20,18 @@ export const SendMessage = ({ onSendMessage }) => {
 
   return (
     <form className={classes.root} id='form' onSubmit={formik.handleSubmit}>
-      <TextField
-        className={classes.input}
-        id='input'
-        autoComplete='off'
-        value={formik.values.input}
-        onChange={formik.handleChange}
-      />
+      <div className={classes.send}>
+        <TextField
+          className={classes.input}
+          id='input'
+          autoComplete='off'
+          value={formik.values.input}
+          onChange={formik.handleChange}
+          size='small'
+        />
+      </div>
       <Button className={classes.button} type='submit'>
-        Send
+        <MdSend className={classes.icon} />
       </Button>
     </form>
   )
