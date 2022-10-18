@@ -27,6 +27,7 @@ export const SendMessage = ({ onSendMessage }) => {
           autoComplete='off'
           value={formik.values.input}
           onChange={formik.handleChange}
+          placeholder='Message'
           size='small'
         />
       </div>
