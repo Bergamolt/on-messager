@@ -1,4 +1,4 @@
-import '../../App.css'
+import classes from './styles.module.css'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
@@ -10,14 +10,16 @@ import { SendMessage } from '../../containers/send-message'
 import { Header } from '../../components/header'
 import { Paper } from 'lau-ui'
 import { Chats } from '../../containers/chats'
-import { useSelector } from 'react-redux'
-import { getUserIdSelector, getUsernameSelector } from '../../store/auth/selectors'
-import { getSelectedChatSelector } from '../../store/chats/selectors'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserIdSelector, getUsernameSelector } from '../../store/user/selectors'
+import { getMessagesSelector, getSelectedChatSelector } from '../../store/chats/selectors'
+import { setMessages } from '../../store/chats/slice'
 
 export const Home = () => {
-  const [messages, setMessages] = useState([])
   const [users, setUsers] = useState([])
+  const dispatch = useDispatch()
   const selectedUser = useSelector(getSelectedChatSelector)
+  const messages = useSelector(getMessagesSelector)
 
   const username = useSelector(getUsernameSelector)
   const userId = useSelector(getUserIdSelector)
@@ -27,17 +29,19 @@ export const Home = () => {
     if (selectedUser) {
       socket.emit(PRIVATE_MESSAGE, {
         content,
-        to: selectedUser.username,
+        to: selectedUser,
       })
 
-      setMessages([
-        ...messages,
-        {
-          content,
-          to: selectedUser.username,
-          from: username,
-        },
-      ])
+      dispatch(
+        setMessages([
+          ...messages,
+          {
+            content,
+            to: selectedUser,
+            from: username,
+          },
+        ])
+      )
     }
   }
 
@@ -49,7 +53,7 @@ export const Home = () => {
   const onlineUser = (onlineUser) => setUsers((oldState) => [...oldState, onlineUser])
 
   const addMessage = ({ content, from, to }) => {
-    if (selectedUser.username === from) {
+    if (selectedUser === from) {
       setMessages((oldState) => [...oldState, { content, from, to }])
     }
   }
@@ -90,22 +94,24 @@ export const Home = () => {
       if (selectedUser) {
         const { data } = await axios.get('/api/messages/get', {
           headers: { 'Content-Type': 'application/json' },
-          params: { from: username, to: selectedUser.username },
+          params: { from: username, to: selectedUser },
         })
 
-        setMessages(data)
+        dispatch(setMessages(data))
       }
     })()
   }, [selectedUser, username])
 
+  console.log('HOME___', users)
+
   return (
     <>
       <Header />
-      <div className='content'>
+      <div className={classes.root}>
         <>
-          <Chats users={users} selected={selectedUser} />
+          <Chats />
 
-          <Paper className='chat'>
+          <Paper className={classes.chat}>
             <Messages username={username} messages={messages} />
             <SendMessage onSendMessage={sendMessage} />
           </Paper>

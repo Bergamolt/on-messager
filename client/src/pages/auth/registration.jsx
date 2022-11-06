@@ -1,37 +1,18 @@
 import { useFormik } from 'formik'
-import axios from 'axios'
+import { useDispatch } from 'react-redux'
 
 import classes from './styles.module.css'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Paper, TextField, Typography } from '@mui/material'
 import { ROUTE } from '../../routes/constants'
 import { Button } from 'lau-ui'
+import { register } from '../../store/auth/actions'
 
 export const Registration = () => {
-  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handlerRegistration = async (username, password) => {
-    try {
-      const { data, status } = await axios.post(
-        '/api/auth/registration',
-        { username, password },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-
-      console.log(data.message)
-
-      if (status === 200) {
-        setTimeout(() => {
-          navigate('/login')
-        }, 1000)
-      }
-    } catch (err) {
-      console.error(err)
-    }
+    dispatch(register(username, password))
   }
 
   const formik = useFormik({

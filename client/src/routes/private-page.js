@@ -1,7 +1,7 @@
 import PropsTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
-import { getUserIdSelector } from '../store/auth/selectors'
+import { getUserIdSelector } from '../store/user/selectors'
 import { ROUTE } from './constants'
 
 export const PrivatePage = ({ children }) => {

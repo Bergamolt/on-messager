@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const { Schema, Types, model } = mongoose
+const { Schema, model } = mongoose
 
 const schema = new Schema({
   from: {

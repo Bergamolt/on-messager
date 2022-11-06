@@ -1,5 +1,7 @@
 .root {
-  padding: 0 10px;
+  height: calc(100% - 86px);
+  overflow: auto;
+  padding: 10px 10px 0px 10px;
   max-width: 662px;
   margin: 0 auto;
 }

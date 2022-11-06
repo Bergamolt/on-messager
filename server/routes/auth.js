@@ -40,7 +40,11 @@ router.post(
 
       user.save()
 
-      res.status(200).json({ message: 'Created user' })
+      res.json({
+        token,
+        userId: user.id,
+        username: user.username,
+      })
     } catch (err) {
       console.error(err)
     }
@@ -86,7 +90,6 @@ router.post(
       res.json({
         token,
         userId: user.id,
-        username: user.username,
       })
     } catch (err) {
       console.error(err)

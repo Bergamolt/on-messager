@@ -7,28 +7,15 @@ router.get('/get', async (req, res) => {
   try {
     const { from, to } = req.query
 
-    const messages = await (
-      await Messages.find({ from, to })
-    ).concat(from !== to ? await Messages.find({ from: to, to: from }) : [])
+    const limitMessages = from !== to ? 100 : 200
+    const firstMessages = await Messages.find({ from, to }).limit(limitMessages)
+    const secondMessages = from !== to ? await Messages.find({ from: to, to: from }).limit(limitMessages) : []
+    const messages = firstMessages.concat(secondMessages)
 
     res.send(messages.sort((a, b) => a.date - b.date))
   } catch (error) {
     console.log({ error })
   }
 })
-
-// router.post('/add', async (res, req) => {
-//   try {
-//     const { content, from, to } = req.body
-
-//     const message = new Messages({ content, from, to })
-
-//     await message.save()
-
-//     res.send(message)
-//   } catch (error) {
-//     console.log({ error })
-//   }
-// })
 
 export default router
