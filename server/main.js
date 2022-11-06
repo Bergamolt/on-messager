@@ -6,7 +6,7 @@ import mongodb from 'mongoose'
 
 import auth from './routes/auth.js'
 import messages from './routes/messages.js'
-import usersRouter from './routes/users.js'
+import userRouter from './routes/user.js'
 
 import dotenv from 'dotenv'
 import { addMessage } from './helpers/messages.js'
@@ -32,6 +32,8 @@ io.on('connection', (socket) => {
   }
 
   socket.emit(USERS, users)
+
+  
 
   // Create channel and listener private message
   socket.join(socket.username)
@@ -67,7 +69,7 @@ io.use((socket, next) => {
 
 app.use('/api/auth', auth)
 app.use('/api/messages', messages)
-app.use('/api/users', usersRouter)
+app.use('/api/user', userRouter)
 
 mongodb.connect(process.env.MONGO_DB)
 

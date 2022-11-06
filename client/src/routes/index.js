@@ -6,7 +6,6 @@ import { AuthPage } from './auth-page'
 
 import { Login } from '../pages/auth/login'
 import { Registration } from '../pages/auth/registration'
-import { Users } from '../pages/users'
 import { Home } from '../pages/home'
 
 const routes = [
@@ -31,14 +30,6 @@ const routes = [
     element: (
       <AuthPage>
         <Login />
-      </AuthPage>
-    ),
-  },
-  {
-    path: ROUTE.USERS,
-    element: (
-      <AuthPage>
-        <Users />
       </AuthPage>
     ),
   },

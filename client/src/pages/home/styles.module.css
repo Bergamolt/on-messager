@@ -1,4 +1,4 @@
-.content {
+.root {
   position: relative;
   top: 0px;
   display: flex;
@@ -8,4 +8,6 @@
 .chat {
   position: relative;
   width: 80%;
+  padding-top: 0;
+  padding-bottom: 0;
 }

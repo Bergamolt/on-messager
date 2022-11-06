@@ -12,7 +12,7 @@ const schema = new Schema({
     type: String,
     required: true,
   },
-  friends: [{ type: Types.ObjectId, ref: 'User' }],
+  friends: [{ userId: { type: Types.ObjectId, ref: 'User' }, username: { type: String } }],
 })
 
 export default model('User', schema)

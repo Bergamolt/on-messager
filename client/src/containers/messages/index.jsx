@@ -1,12 +1,20 @@
 import PropTypes from 'prop-types'
 import cx from 'classnames'
 import classes from './styles.module.css'
+import { useEffect, useRef } from 'react'
 
 export const Messages = ({ messages, username }) => {
+  const refEl = useRef(null)
   const date = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric' })
 
+  useEffect(() => {
+    if (refEl.current) {
+      refEl.current.scrollTop = refEl.current.scrollHeight
+    }
+  })
+
   return (
-    <div className={classes.root} id='messages'>
+    <div ref={refEl} className={classes.root}>
       {messages?.map((msg, i) => (
         <div className={cx(classes.bubble, username === msg.from && classes.self)} key={i}>
           <div className={classes.bubble_content}>

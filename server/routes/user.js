@@ -3,11 +3,13 @@ import User from '../models/user.js'
 
 const router = new Router()
 
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const users = await User.find({}).select('-password')
+    const { userId } = req.body
 
-    res.send(users)
+    const user = await User.findOne({ _id: userId }, '-password')
+
+    res.send(user)
   } catch (error) {
     console.log({ error })
   }

@@ -1,8 +1,7 @@
 import classes from './styles.module.css'
-import { AppBar } from 'lau-ui'
 import { useDispatch } from 'react-redux'
-import { Button } from 'lau-ui'
-import { logout } from '../../store/auth'
+import { Button, AppBar } from 'lau-ui'
+import { logout } from '../../store/auth/actions'
 
 export const Header = () => {
   const dispatch = useDispatch()
