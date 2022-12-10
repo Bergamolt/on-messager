@@ -1,0 +1,27 @@
+.button {
+  box-shadow: rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  border-radius: 32px;
+  padding: 6px 16px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: var(--lau-color-white, #fff);
+  background-color: var(--lau-primary-color, #0b57d0);
+
+  &__outlined {
+    background-color: transparent;
+    border: 1px solid var(--lau-primary-color, #0b57d0);
+    color: var(--lau-primary-color, #0b57d0);
+  }
+
+  &__text {
+    color: var(--lau-primary-color, #0b57d0);
+    background-color: transparent;
+    box-shadow: none;
+  }
+}

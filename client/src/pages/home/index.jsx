@@ -1,6 +1,5 @@
 import classes from './styles.module.css'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 
 import socket from '../../services/socket'
 import { PRIVATE_MESSAGE, USERS, USER_CONNECTED, USER_DISCONNECTED } from '../../services/socket/constants'
@@ -14,9 +13,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getUserIdSelector, getUsernameSelector } from '../../store/user/selectors'
 import { getMessagesSelector, getSelectedChatSelector } from '../../store/chats/selectors'
 import { setMessages } from '../../store/chats/slice'
+import Axios from '../../services/axios'
 
 export const Home = () => {
   const [users, setUsers] = useState([])
+  console.log('users', users)
   const dispatch = useDispatch()
   const selectedUser = useSelector(getSelectedChatSelector)
   const messages = useSelector(getMessagesSelector)
@@ -91,8 +92,8 @@ export const Home = () => {
 
   useEffect(() => {
     (async () => {
-      if (selectedUser) {
-        const { data } = await axios.get('/api/messages/get', {
+      if (userId && selectedUser) {
+        const { data } = await Axios.get('/api/messages/get', {
           headers: { 'Content-Type': 'application/json' },
           params: { from: username, to: selectedUser },
         })
@@ -101,8 +102,6 @@ export const Home = () => {
       }
     })()
   }, [selectedUser, username])
-
-  console.log('HOME___', users)
 
   return (
     <>

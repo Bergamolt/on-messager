@@ -1,8 +1,3 @@
-import axios from 'axios'
+import Axios from '../axios'
 
-export const gatewayFetch = (url, request) =>
-  axios.post(url, request, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+export const gatewayFetch = (url, request) => Axios.post(url, request)

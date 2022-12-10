@@ -1,0 +1,18 @@
+.app-bar {
+  display: flex;
+  background-color: var(--lau-app-bar-color, #fff);
+  box-sizing: border-box;
+  width: 100%;
+  height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+
+  &__fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+  }
+}

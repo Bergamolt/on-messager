@@ -75,7 +75,7 @@ router.post(
         })
       }
 
-      const isMatch = bycrypt.compare(password, user.password)
+      const isMatch = await bycrypt.compare(password, user.password)
 
       if (!isMatch) {
         return res.status(400).json({
@@ -83,12 +83,12 @@ router.post(
         })
       }
 
-      const jwtSecret = 'secret'
-
-      const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: '1h' })
+      const accessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '10min' })
+      const refreshToken = jwt.sign({ userId: user.id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '1d' })
 
       res.json({
-        token,
+        token: accessToken,
+        refreshToken,
         userId: user.id,
       })
     } catch (err) {
@@ -96,5 +96,26 @@ router.post(
     }
   }
 )
+
+router.post('/refresh', (req, res) => {
+  if (req?.body?.refreshToken) {
+    const { refreshToken } = req.body
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: err.message })
+      }
+
+      const accessToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_SECRET, { expiresIn: '10min' })
+
+      return res.json({
+        token: accessToken,
+        refreshToken,
+      })
+    })
+  } else {
+    return res.status(401)
+  }
+})
 
 export default router
