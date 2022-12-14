@@ -6,6 +6,8 @@ import User from '../models/user.js'
 
 const router = new Router()
 
+let usedRefreshTokens = []
+
 router.post(
   '/registration',
   [
@@ -98,23 +100,39 @@ router.post(
 )
 
 router.post('/refresh', (req, res) => {
-  if (req?.body?.refreshToken) {
-    const { refreshToken } = req.body
+  const refreshToken = req.body?.refreshToken
 
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
-      if (err) {
-        return res.status(403).json({ message: err.message })
-      }
+  if (refreshToken && !usedRefreshTokens.includes(refreshToken)) {
+    try {
+      jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
+        if (err) {
+          return res.status(403).json({ message: err.message })
+        }
 
-      const accessToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_SECRET, { expiresIn: '10min' })
+        const accessToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_SECRET, { expiresIn: '10min' })
 
-      return res.json({
-        token: accessToken,
-        refreshToken,
+        return res.json({
+          token: accessToken,
+          refreshToken,
+        })
       })
-    })
+    } catch (err) {
+      console.error(err)
+    }
   } else {
     return res.status(401)
+  }
+})
+
+router.post('/logout', (req, res) => {
+  const refreshToken = req.body?.refreshToken
+
+  if (refreshToken && !usedRefreshTokens.includes(refreshToken)) {
+    usedRefreshTokens.push(refreshToken)
+
+    res.json({ message: 'Logout successful' })
+  } else {
+    res.status(403)
   }
 })
 

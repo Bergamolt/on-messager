@@ -2,7 +2,7 @@ import classes from './styles.module.css'
 import { useEffect, useState } from 'react'
 
 import socket from '../../services/socket'
-import { PRIVATE_MESSAGE, USERS, USER_CONNECTED, USER_DISCONNECTED } from '../../services/socket/constants'
+import { PRIVATE_MESSAGE, USERS, USER_CONNECTED, USER_DISCONNECTED, USER_OFFLINE, USER_ONLINE } from '../../services/socket/constants'
 
 import { Messages } from '../../containers/messages'
 import { SendMessage } from '../../containers/send-message'
@@ -11,6 +11,7 @@ import { Paper } from 'lau-ui'
 import { Chats } from '../../containers/chats'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserIdSelector, getUsernameSelector } from '../../store/user/selectors'
+import { setUserOnline, setUserOffline } from '../../store/user/actions'
 import { getMessagesSelector, getSelectedChatSelector } from '../../store/chats/selectors'
 import { setMessages } from '../../store/chats/slice'
 import Axios from '../../services/axios'
@@ -26,7 +27,6 @@ export const Home = () => {
   const userId = useSelector(getUserIdSelector)
 
   const sendMessage = (content) => {
-    console.log('sendMessage___')
     if (selectedUser) {
       socket.emit(PRIVATE_MESSAGE, {
         content,
@@ -51,21 +51,29 @@ export const Home = () => {
 
   const offlineUser = (offlineUser) => setUsers((oldState) => oldState.filter((user) => user.username !== offlineUser))
 
-  const onlineUser = (onlineUser) => setUsers((oldState) => [...oldState, onlineUser])
-
   const addMessage = ({ content, from, to }) => {
-    if (selectedUser === from) {
-      setMessages((oldState) => [...oldState, { content, from, to }])
-    }
+    dispatch(
+      setMessages([
+        ...messages,
+        {
+          content,
+          to,
+          from,
+        },
+      ])
+    )
   }
 
   useEffect(() => {
     if (userId) {
       socket.auth = { username }
       socket.connect()
+
+      socket.emit(USER_CONNECTED, { username })
     }
 
     socket.on(PRIVATE_MESSAGE, ({ content, from, to }) => {
+      console.log('PRIVATE_MESSAGE', { content, from, to })
       addMessage({ content, from, to })
     })
 
@@ -73,8 +81,12 @@ export const Home = () => {
       allUsersHandler(users)
     })
 
-    socket.on(USER_CONNECTED, (user) => {
-      onlineUser(user)
+    socket.on(USER_ONLINE, (user) => {
+      dispatch(setUserOnline(user.username))
+    })
+
+    socket.on(USER_OFFLINE, (user) => { 
+      dispatch(setUserOffline(user.username))
     })
 
     socket.on(USER_DISCONNECTED, (username) => {
@@ -91,7 +103,8 @@ export const Home = () => {
   }, [userId, username])
 
   useEffect(() => {
-    (async () => {
+    // eslint-disable-next-line no-extra-semi
+    ;(async () => {
       if (userId && selectedUser) {
         const { data } = await Axios.get('/api/messages/get', {
           headers: { 'Content-Type': 'application/json' },

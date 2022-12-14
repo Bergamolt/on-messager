@@ -1,12 +1,15 @@
 import axios from 'axios'
 import { gatewayFetch } from '../../services/gateway'
 import { getUser } from '../user/actions'
+import { ROUTE } from '../../routes/constants'
 
-export const logout = () => {
+export const logout = () => () => {
   try {
-    gatewayFetch('/api/auth/logout').then(() => {
+    gatewayFetch('/api/auth/logout', {
+      refreshToken: JSON.parse(localStorage.getItem('refreshToken')),
+    }).then(() => {
       localStorage.clear()
-      window.location.reload()
+      window.location.href = ROUTE.LOGIN
     })
   } catch (err) {
     console.error(err)

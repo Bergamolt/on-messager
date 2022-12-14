@@ -1,13 +1,14 @@
 import cx from 'classnames'
 import classes from './styles.module.css'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../store/auth/actions'
-import { ROUTE } from '../../routes/constants'
+import { getUsernameSelector } from '../../store/user/selectors'
+import socket from '../../services/socket'
+import { USER_OFFLINE } from '../../services/socket/constants'
 
 export const Header = () => {
-  const navigate = useNavigate()
   const dispatch = useDispatch()
+  const username = useSelector(getUsernameSelector)
 
   return (
     <header className={cx('app-bar', classes.root)}>
@@ -16,7 +17,7 @@ export const Header = () => {
         className='button'
         onClick={() => {
           dispatch(logout())
-          navigate(ROUTE.LOGIN)
+          socket.emit(USER_OFFLINE, { username })
         }}
       >
         Log Out

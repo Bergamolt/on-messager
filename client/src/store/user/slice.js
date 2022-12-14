@@ -18,9 +18,21 @@ export const userSlice = createSlice({
       state.username = action.payload.username
       state.friends = action.payload.friends
     },
+
+    setUserOnline: (state, action) => {
+      state.friends = state.friends?.map((friend) =>
+        friend.username === action.payload ? { ...friend, online: true } : friend
+      )
+    },
+
+    setUserOffline: (state, action) => {
+      state.friends = state.friends?.map((friend) =>
+        friend.username === action.payload ? { ...friend, online: false } : friend
+      )
+    },
   },
 })
 
-export const { setUser } = userSlice.actions
+export const { actions } = userSlice
 
 export default userSlice.reducer

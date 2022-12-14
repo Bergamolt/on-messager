@@ -10,9 +10,18 @@ import messages from './routes/messages.js'
 import userRouter from './routes/user.js'
 
 import { addMessage } from './helpers/messages.js'
-import { PRIVATE_MESSAGE, USERS, USER_CONNECTED, USER_DISCONNECTED } from './services/constants.js'
+import {
+  PRIVATE_MESSAGE,
+  USERS,
+  USER_CONNECTED,
+  USER_DISCONNECTED,
+  USER_OFFLINE,
+  USER_ONLINE,
+} from './services/constants.js'
 import { connectDB } from './services/db.js'
 import { authenticateJWT } from './middlewares/authenticateJwt.js'
+
+import User from './models/user.js'
 
 dotenv.config()
 
@@ -50,7 +59,49 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.broadcast.emit(USER_CONNECTED, { id: socket.id, username: socket.username, messages: [] })
+  socket.on(USER_CONNECTED, async ({ username }) => {
+    const user = await User.findOne({ username })
+
+    if (user) {
+      user.online = true
+
+      await User.where('friends.userId')
+        .equals(user._id)
+        .updateMany({
+          $set: {
+            'friends.$.online': true,
+          },
+        })
+
+      await user.save()
+
+      user.friends.forEach((it) => {
+        io.to(it.username).emit(USER_ONLINE, user)
+      })
+    }
+  })
+
+  socket.on(USER_OFFLINE, async ({ username }) => {
+    const user = await User.findOne({ username })
+
+    if (user) {
+      user.online = false
+
+      await User.where('friends.userId')
+        .equals(user._id)
+        .updateMany({
+          $set: {
+            'friends.$.online': false,
+          },
+        })
+
+      await user.save()
+
+      user.friends.forEach((it) => {
+        io.to(it.username).emit(USER_OFFLINE, user)
+      })
+    }
+  })
 
   socket.on('disconnect', () => {
     socket.broadcast.emit(USER_DISCONNECTED, socket.username)

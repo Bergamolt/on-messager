@@ -12,7 +12,17 @@ const schema = new Schema({
     type: String,
     required: true,
   },
-  friends: [{ userId: { type: Types.ObjectId, ref: 'User' }, username: { type: String } }],
+  online: {
+    type: Boolean,
+    default: false,
+  },
+  friends: [
+    {
+      userId: { type: Types.ObjectId, ref: 'User' },
+      username: { type: String, ref: 'User.username' },
+      online: { type: Boolean, default: false },
+    },
+  ],
 })
 
 export default model('User', schema)
